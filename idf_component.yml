@@ -2,6 +2,7 @@ version: "1.0.0" # Component version, required only for components pushed to the
 targets: # List of supported targets (optional, if missing all targets are considered to be supported)
   - esp32
   - esp32s2
+  - esp32s3
 description: ESP-IoT-Solution UVC_STREAM for USB Camera # Description (optional)
 url: https://github.com/iot-components/uvc_stream # Original repository (optional)
 dependencies:
