@@ -1159,7 +1159,7 @@ void uvc_stream_close(_uvc_stream_handle_t *strmh)
 }
 
 /****************************************************** Task Code ******************************************************/
-
+extern void printf_camera_state(char *state);
 static void _usb_processing_task(void *arg)
 {
     UVC_CHECK_GOTO(arg != NULL, "Task arg can't be NULL", delete_task_);
@@ -1179,7 +1179,7 @@ static void _usb_processing_task(void *arg)
 
     port_hdl = _usb_port_init((void *)uvc_dev->queue_hdl, (void *)uvc_dev->queue_hdl);
     UVC_CHECK_GOTO(port_hdl != NULL, "USB Port init failed", delete_dev_);
-
+    printf_camera_state("Connected");
     ret = _usb_port_get_speed(port_hdl, &port_speed);
     UVC_CHECK_GOTO(ESP_OK == ret, "USB Port get speed failed", delete_dev_);
 
@@ -1230,6 +1230,7 @@ static void _usb_processing_task(void *arg)
     }
 
     ESP_LOGI(TAG, "Camera Start Streaming");
+    printf_camera_state("Start Streaming");
 
     for (int i = 0; i < NUM_ISOC_STREAM_URBS; i++) {
         ret = hcd_urb_enqueue(stream_pipe_hdl, stream_urbs[i]);
@@ -1307,6 +1308,7 @@ deinit_usb_port_:
 delete_dev_:
     xEventGroupSetBits(uvc_dev->event_group, USB_STREAM_STOP_DONE);
     free(uvc_dev);
+    if(keep_running) printf_camera_state("Not Suppoted!");
 delete_task_:
     ESP_LOGW(TAG, "_usb_processing_task deleted");
     ESP_LOGW(TAG, "_usb_processing_task watermark = %d B", uxTaskGetStackHighWaterMark(NULL));
